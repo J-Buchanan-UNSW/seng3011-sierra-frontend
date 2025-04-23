@@ -7,46 +7,64 @@ import { ScoreCard } from '../components/ScoreCard';
 import { getDimensionDisplayName } from '../utils/colorUtils';
 
 export const Dashboard: React.FC = () => {
-  const { 
-    countries, 
-    companies, 
-    selectedDimension, 
-    selectedCountry 
+  const {
+    countries,
+    companies,
+    selectedDimension,
+    selectedCountry
   } = useESG();
-  
+
   // Calculate average scores
   const calculateAverageScores = () => {
-    const totalScores = countries.reduce(
-      (acc, country) => {
-        acc.environmental += country.scores.environmental;
-        acc.social += country.scores.social;
-        acc.governance += country.scores.governance;
-        return acc;
-      },
-      { environmental: 0, social: 0, governance: 0 }
-    );
-    
+
+    let totalScores: any = {
+      "environmental": 0,
+      "social": 0,
+      "governance": 0
+    }
+
+    let contributors: any = {
+      "environmental": 0,
+      "social": 0,
+      "governance": 0
+    }
+
+    Object.values(countries).forEach((val) => {
+      totalScores["environmental"] += val["scores"].environmental;
+      if (val["scores"].environmental) {
+        contributors["environmental"] += 1;
+      }
+      totalScores["social"] += val["scores"].social;
+      if (val["scores"].social) {
+        contributors["social"] += 1;
+      }
+      totalScores["governance"] += val["scores"].governance;
+      if (val["scores"].governance) {
+        contributors["governance"] += 1;
+      }
+    });
+
     return {
-      environmental: Math.round(totalScores.environmental / countries.length),
-      social: Math.round(totalScores.social / countries.length),
-      governance: Math.round(totalScores.governance / countries.length),
+      environmental: Math.round(totalScores.environmental / Math.max(contributors["environmental"], 1)),
+      social: Math.round(totalScores.social / Math.max(contributors["social"], 1)),
+      governance: Math.round(totalScores.governance / Math.max(contributors["governance"], 1)),
     };
   };
-  
-  const averageScores = calculateAverageScores();
-  
+
+  const averageScores: any = calculateAverageScores();
+
   // Find top performing countries by dimension
   const topCountries = countries
     .sort((a, b) => b.scores[selectedDimension] - a.scores[selectedDimension])
     .slice(0, 5);
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <h1 className="text-2xl font-semibold text-gray-900">ESG Dashboard</h1>
       <p className="mt-1 text-gray-600">
         Viewing {getDimensionDisplayName(selectedDimension)} performance data
       </p>
-      
+
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
@@ -65,7 +83,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
@@ -83,7 +101,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
@@ -105,7 +123,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
@@ -126,7 +144,7 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
         <div className="p-4 sm:p-6">
           <h2 className="text-lg font-medium text-gray-900">Global ESG Map</h2>
@@ -150,7 +168,7 @@ export const Dashboard: React.FC = () => {
             <div className="mt-4 flow-root">
               <ul className="-my-5 divide-y divide-gray-200">
                 {topCountries.map((country) => (
-                  <li key={country.id} className="py-4">
+                  <li key={country.name} className="py-4">
                     <div className="flex items-center space-x-4">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">

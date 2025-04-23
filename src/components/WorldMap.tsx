@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import {
   ComposableMap,
   Geographies,
@@ -6,46 +5,31 @@ import {
   ZoomableGroup,
 } from 'react-simple-maps';
 import { useESG } from '../context/ESGContext';
-import { Country, MapGeography } from '../types';
-import { colorHexMap, getScoreColor } from '../utils/colorUtils';
+import { MapGeography } from '../types';
+import { getScoreColor, colorHexMap } from '@/utils/colorUtils';
 
 const geoUrl = "/world.json";
 
 export const WorldMap: React.FC = () => {
   const {
     countries,
-    selectedDimension,
     selectedCountry,
-    setSelectedCountry
+    setSelectedCountry,
+    selectedDimension
   } = useESG();
-  const [position, setPosition] = useState<{ coordinates: [number, number]; zoom: number }>({
-    coordinates: [0, 20],
-    zoom: 1
-  });
 
-  useEffect(() => {
-    if (selectedCountry) {
-        const destCoordinates = selectedCountry.coordinates
-        destCoordinates[1] = Math.max(destCoordinates[1] - 20, 0)
-        setPosition({
-            coordinates: destCoordinates,
-            zoom: 1.5
-        });
-    } else {
-      setPosition({
-        coordinates: [0, 20],
-        zoom: 1
-      });
-    }
-  }, [selectedCountry]);
-
-  const findCountryByGeoId = (geoId: string): Country | undefined => {
-    return countries.find(country => country.code === geoId);
-  };
+  const findCountryByCode = (code: any) => {
+    return countries.find((country: any) => {
+      if (country.code) {
+        return country.code.toString() == code.toString();
+      }
+      return false;
+    });
+  }
 
   const handleCountryClick = (geo: MapGeography) => {
-    const geoId = geo.id
-    const country = findCountryByGeoId(geoId);
+    const geoCode = geo.id;
+    const country = findCountryByCode(geoCode);
     if (country) {
       setSelectedCountry(country);
     }
@@ -53,10 +37,6 @@ export const WorldMap: React.FC = () => {
 
   const handleBackToWorld = () => {
     setSelectedCountry(null);
-    setPosition({
-      coordinates: [0, 20],
-      zoom: 1
-    });
   };
 
   return (
@@ -79,18 +59,18 @@ export const WorldMap: React.FC = () => {
         className="w-full h-full"
       >
         <ZoomableGroup
-            center={position.coordinates}
-            zoom={position.zoom}
+            center={[0, 400]}
+            zoom={1.4}
             translateExtent={[[0, 0], [800, 600]]}
             >
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => {
-                const country = findCountryByGeoId(geo.id);
+                const country = findCountryByCode(geo.id);
                 let fillColor = "#cccccc";
                 if (country) {
-                    const colorClass = getScoreColor(country.scores, selectedDimension);
-                    fillColor = colorHexMap[colorClass] || "#cccccc";
+                  const colorClass = getScoreColor(country.scores, selectedDimension);
+                  fillColor = colorHexMap[colorClass] || "#cccccc";
                 }
 
                 return (

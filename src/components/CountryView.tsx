@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker } from 'react-simple-maps';
 import { useESG } from '../context/ESGContext';
-import { colorHexMap, getScoreColor } from '../utils/colorUtils';
-import { ScoreCard } from './ScoreCard';
 import * as topojson from 'topojson-client';
 import { geoCentroid, geoBounds, geoContains } from 'd3-geo';
+import { ScoreCard } from './ScoreCard';
+import { getScoreColor, colorHexMap } from '@/utils/colorUtils';
 
 const geoUrl = "/world-countries.json";
 
@@ -14,14 +14,11 @@ export const CountryView: React.FC = () => {
   const {
     selectedCountry,
     selectedDimension,
-    getCompaniesByCountry,
     setSelectedCompany
   } = useESG();
 
   const [geoData, setGeoData] = useState<any>(null);
   const [countryView, setCountryView] = useState<{ center: [number, number]; zoom: number } | null>(null);
-
-  const companies = selectedCountry ? getCompaniesByCountry(selectedCountry.id) : [];
 
   useEffect(() => {
     fetch(geoUrl)
@@ -58,6 +55,7 @@ export const CountryView: React.FC = () => {
     } else if (selectedCountry) {
       setCountryView({ center: [0, 20], zoom: 1.5 });
     }
+
   }, [geoData, selectedCountry]);
 
   if (!selectedCountry || !geoData || !countryView) {
@@ -65,10 +63,10 @@ export const CountryView: React.FC = () => {
   }
 
   const handleCompanyClick = (companyId: string) => {
-    const company = companies.find(c => c.id === companyId);
+    const company: any = Object.values(selectedCountry.companies).find((data: any) => data.id === companyId);
     if (company) {
       setSelectedCompany(company);
-      navigate(`/company/${companyId}`);
+      navigate(`/company/${companyId}?name=${encodeURIComponent(company.name)}`);
     }
   };
 
@@ -126,7 +124,7 @@ export const CountryView: React.FC = () => {
                   }
                 </Geographies>
 
-                {companies.map((company) => {
+                {Object.values(selectedCountry.companies).map((company: any) => {
                   let markerPosition: [number, number] = countryView.center;
                   const feature: any = topojson.feature(geoData, geoData.objects.countries)
                   const country = feature.features.find(
@@ -150,8 +148,8 @@ export const CountryView: React.FC = () => {
                       attempts++;
                     }
                   }
-                  const companyClass = getScoreColor(company.scores, selectedDimension);
-                  const fillColor = colorHexMap[companyClass];
+                  const colorClass = getScoreColor(company.scores, selectedDimension);
+                  const fillColor = colorHexMap[colorClass] || "#cccccc";
 
                   return (
                     <Marker
@@ -160,9 +158,9 @@ export const CountryView: React.FC = () => {
                       onClick={() => handleCompanyClick(company.id)}
                     >
                       <circle
-                        r={12 / countryView.zoom}
+                        r={6 / countryView.zoom}
                         fill={fillColor}
-                        stroke="#FFFFFF"
+                        stroke="#000000"
                         strokeWidth={2 / countryView.zoom}
                         className="company-dot"
                       />
@@ -176,8 +174,8 @@ export const CountryView: React.FC = () => {
           <div className="mt-4">
             <h3 className="text-lg font-medium text-gray-900 mb-2">Companies in {selectedCountry.name}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {companies.map((company) => {
-                const colorClass = `border-${getScoreColor(company.scores, selectedDimension)}`;
+              {Object.values(selectedCountry.companies).map((company: any) => {
+                const colorClass = "#FFFFFF";
 
                 return (
                   <div
@@ -186,7 +184,7 @@ export const CountryView: React.FC = () => {
                     onClick={() => handleCompanyClick(company.id)}
                   >
                     <div className="font-medium text-gray-900">{company.name}</div>
-                    <div className="text-sm text-gray-500">{company.industry}</div>
+                    <div className="text-sm text-gray-500">{selectedCountry.name}</div>
                     <div className="mt-1 text-sm">
                       {selectedDimension} score: <span className="font-medium">{company.scores[selectedDimension]}</span>
                     </div>
@@ -208,7 +206,7 @@ export const CountryView: React.FC = () => {
             <ul className="space-y-2">
               <li className="flex justify-between">
                 <span className="text-gray-600">Companies:</span>
-                <span className="font-medium">{companies.length}</span>
+                <span className="font-medium">{Object.keys(selectedCountry.companies).length}</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-gray-600">Average ESG Score:</span>

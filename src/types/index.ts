@@ -28,6 +28,7 @@ export interface Company {
   foundedYear: number;
   employees: number;
   revenue: string;
+  stats: any;
 }
 
 export interface MapGeography {

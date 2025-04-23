@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart3, Globe, Settings, Menu, X } from 'lucide-react';
+import { Globe, Settings, Menu, X } from 'lucide-react';
 import { useESG } from '../context/ESGContext';
 import { ESGDimension } from '../types';
-import { getDimensionDisplayName } from '../utils/colorUtils';
 
 export const Navbar: React.FC = () => {
   const { selectedDimension, setSelectedDimension } = useESG();
@@ -22,7 +21,7 @@ export const Navbar: React.FC = () => {
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
                 <Globe className="h-8 w-8 text-indigo-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">ESG Analytics</span>
+                <span className="ml-2 text-xl font-bold text-gray-900">Sierra Impact</span>
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -35,9 +34,6 @@ export const Navbar: React.FC = () => {
                 </Link>
                 <Link to="/companies" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md">
                   Companies
-                </Link>
-                <Link to="/reports" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md">
-                  Reports
                 </Link>
               </div>
             </div>
@@ -120,13 +116,6 @@ export const Navbar: React.FC = () => {
               onClick={() => setMenuOpen(false)}
             >
               Companies
-            </Link>
-            <Link
-              to="/reports"
-              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
-              onClick={() => setMenuOpen(false)}
-            >
-              Reports
             </Link>
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">

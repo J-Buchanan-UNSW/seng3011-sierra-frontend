@@ -26,7 +26,7 @@ export const getColorByScore = (
 
 // Get color for specific dimension of ESG score
 export const getScoreColor = (
-  scores: ESGScore, 
+  scores: ESGScore,
   dimension: ESGDimension | ESGDimensionShort
 ): string => {
   const dim = normalizeDimension(dimension);
@@ -39,11 +39,11 @@ export const normalizeDimension = (
   dimension: ESGDimension | ESGDimensionShort
 ): ESGDimension => {
   switch (dimension) {
-    case 'E':
+    case 'environmental':
       return 'environmental';
-    case 'S':
+    case 'social':
       return 'social';
-    case 'G':
+    case 'governance':
       return 'governance';
     default:
       return dimension as ESGDimension;
@@ -83,7 +83,7 @@ export const getDimensionDisplayName = (
   dimension: ESGDimension | ESGDimensionShort
 ): string => {
   const dim = normalizeDimension(dimension);
-  
+
   switch (dim) {
     case 'environmental':
       return 'Environmental';

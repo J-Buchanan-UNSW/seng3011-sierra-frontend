@@ -1,39 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown } from 'lucide-react';
+import { Search, ArrowUpDown } from 'lucide-react';
 import { useESG } from '../context/ESGContext';
-import { ESGDimension } from '../types';
 import { getDimensionDisplayName } from '../utils/colorUtils';
 
 export const CompaniesList: React.FC = () => {
   const { companies, selectedDimension } = useESG();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterIndustry, setFilterIndustry] = useState<string>('');
   const [sortBy, setSortBy] = useState<'name' | 'industry' | 'score'>('score');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  
-  // Get unique industries
-  const industries = Array.from(
-    new Set(companies.map(company => company.industry))
-  ).sort();
-  
+
   // Filter and sort companies
   const filteredCompanies = companies
     .filter(company => {
       // Filter by search query
-      const matchesSearch = 
-        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.industry.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      // Filter by industry
-      const matchesIndustry = !filterIndustry || company.industry === filterIndustry;
-      
-      return matchesSearch && matchesIndustry;
+      const matchesSearch =
+        company.name.toLowerCase().includes(searchQuery.toLowerCase())
+
+      return matchesSearch;
     })
     .sort((a, b) => {
       if (sortBy === 'name') {
-        return sortOrder === 'asc' 
+        return sortOrder === 'asc'
           ? a.name.localeCompare(b.name)
           : b.name.localeCompare(a.name);
       } else if (sortBy === 'industry') {
@@ -46,7 +35,7 @@ export const CompaniesList: React.FC = () => {
           : b.scores[selectedDimension] - a.scores[selectedDimension];
       }
     });
-  
+
   const handleSort = (field: 'name' | 'industry' | 'score') => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -55,14 +44,14 @@ export const CompaniesList: React.FC = () => {
       setSortOrder('desc');
     }
   };
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <h1 className="text-2xl font-semibold text-gray-900">Companies</h1>
       <p className="mt-1 text-gray-600">
         Browse and analyze company ESG data
       </p>
-      
+
       <div className="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -78,29 +67,13 @@ export const CompaniesList: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-400" />
-              <select
-                className="block py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={filterIndustry}
-                onChange={(e) => setFilterIndustry(e.target.value)}
-              >
-                <option value="">All Industries</option>
-                {industries.map(industry => (
-                  <option key={industry} value={industry}>
-                    {industry}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
+
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">Sort by:</span>
               <button
                 className={`inline-flex items-center px-3 py-1 border ${
-                  sortBy === 'name' 
-                    ? 'border-indigo-500 text-indigo-500' 
+                  sortBy === 'name'
+                    ? 'border-indigo-500 text-indigo-500'
                     : 'border-gray-300 text-gray-700'
                 } bg-white text-sm font-medium rounded-md hover:bg-gray-50`}
                 onClick={() => handleSort('name')}
@@ -112,21 +85,8 @@ export const CompaniesList: React.FC = () => {
               </button>
               <button
                 className={`inline-flex items-center px-3 py-1 border ${
-                  sortBy === 'industry' 
-                    ? 'border-indigo-500 text-indigo-500' 
-                    : 'border-gray-300 text-gray-700'
-                } bg-white text-sm font-medium rounded-md hover:bg-gray-50`}
-                onClick={() => handleSort('industry')}
-              >
-                Industry
-                {sortBy === 'industry' && (
-                  <ArrowUpDown className="ml-1 h-4 w-4" />
-                )}
-              </button>
-              <button
-                className={`inline-flex items-center px-3 py-1 border ${
-                  sortBy === 'score' 
-                    ? 'border-indigo-500 text-indigo-500' 
+                  sortBy === 'score'
+                    ? 'border-indigo-500 text-indigo-500'
                     : 'border-gray-300 text-gray-700'
                 } bg-white text-sm font-medium rounded-md hover:bg-gray-50`}
                 onClick={() => handleSort('score')}
@@ -139,43 +99,43 @@ export const CompaniesList: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Company
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Industry
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Environmental
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Social
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Governance
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   Average
@@ -190,9 +150,9 @@ export const CompaniesList: React.FC = () => {
                 const avgScore = Math.round(
                   (company.scores.environmental + company.scores.social + company.scores.governance) / 3
                 );
-                
+
                 return (
-                  <tr key={company.id} className="hover:bg-gray-50">
+                  <tr key={company.name} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{company.name}</div>
                     </td>
@@ -237,7 +197,7 @@ export const CompaniesList: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
-                        to={`/company/${company.id}`}
+                        to={`/company/${company.id}?name=${encodeURIComponent(company.name)}`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         View
@@ -248,7 +208,7 @@ export const CompaniesList: React.FC = () => {
               })}
             </tbody>
           </table>
-          
+
           {filteredCompanies.length === 0 && (
             <div className="px-6 py-8 text-center">
               <p className="text-gray-500">No companies found matching your criteria.</p>
