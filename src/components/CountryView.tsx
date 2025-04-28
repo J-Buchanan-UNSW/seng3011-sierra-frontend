@@ -6,6 +6,7 @@ import * as topojson from 'topojson-client';
 import { geoCentroid, geoBounds, geoContains } from 'd3-geo';
 import { ScoreCard } from './ScoreCard';
 import { getScoreColor, colorHexMap } from '@/utils/colorUtils';
+import { getCountryWeather } from '@/data/weatherData';
 
 const geoUrl = "/world-countries.json";
 
@@ -19,6 +20,7 @@ export const CountryView: React.FC = () => {
 
   const [geoData, setGeoData] = useState<any>(null);
   const [countryView, setCountryView] = useState<{ center: [number, number]; zoom: number } | null>(null);
+  const [countryWeather, setCountryWeather] = useState<any>(null);
 
   useEffect(() => {
     fetch(geoUrl)
@@ -50,6 +52,10 @@ export const CountryView: React.FC = () => {
         setCountryView({
           center: centroid,
           zoom
+        });
+
+        getCountryWeather(selectedCountry.code).then((w) => {
+          setCountryWeather(w)
         });
       }
     } else if (selectedCountry) {
@@ -232,6 +238,43 @@ export const CountryView: React.FC = () => {
                 </span>
               </li>
             </ul>
+          </div>
+
+          <div className="mt-4 bg-white rounded-lg shadow-sm p-4">
+            <h3 className="font-medium text-gray-900 mb-2">Country Weather</h3>
+            {countryWeather ? (<ul className="space-y-2">
+              {countryWeather.apparent_temperature_max_celsius && (
+                <li className="flex justify-between">
+                  <span className="text-gray-600">High:</span>
+                  <span className="font-medium">{countryWeather.apparent_temperature_max_celsius.toFixed(2).toString() + "°C"}</span>
+                </li>)}
+              {countryWeather.apparent_temperature_min_celsius && (
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Low:</span>
+                  <span className="font-medium">{countryWeather.apparent_temperature_min_celsius.toFixed(2).toString() + "°C"}</span>
+                </li>)}
+              {countryWeather.apparent_temperature_celsius && (
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Avg:</span>
+                  <span className="font-medium">{countryWeather.apparent_temperature_celsius.toFixed(2).toString() + "°C"}</span>
+                </li>)}
+              {countryWeather.cloud_cover_percentage != null && (
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Cloud Cover:</span>
+                  <span className="font-medium">{countryWeather.cloud_cover_percentage.toFixed(2).toString() + "%"}</span>
+                </li>)}
+              {countryWeather.daylight_duration_seconds && (
+                <li className="flex justify-between">
+                  <span className="text-gray-600">Daylight Duration:</span>
+                  <span className="font-medium">{Math.round(countryWeather.daylight_duration_seconds / 3600).toString() + " hours"}</span>
+                </li>
+              )}
+              <div className='text-[10px] text-gray-600 text-right pt-[1rem]'>
+                From Dr Weather (F11A CHARLIE)
+              </div>
+            </ul>) :
+              (<div>No weather data</div>)
+            }
           </div>
         </div>
       </div>

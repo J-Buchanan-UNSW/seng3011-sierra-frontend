@@ -198,7 +198,7 @@ export const calculateScores = (companyData: any, maxValues: any) => {
 const fetchAllPaginated = async (baseUrl: string, pageSize = 5000) => {
     let allData: any[] = [];
     let currentPage = 1;
-    let totalPages = 1;
+    let totalPages = 3;
 
     while (currentPage <= totalPages) {
         const pagedUrl = `${baseUrl}&page=${currentPage}&page_size=${pageSize}`;
@@ -218,7 +218,7 @@ const fetchAllPaginated = async (baseUrl: string, pageSize = 5000) => {
         // Your Lambda returns data in a nested structure
         if (result.data && Array.isArray(result.data)) {
             allData.push(...result.data);
-            totalPages = result.total_pages || totalPages;
+            // totalPages = result.total_pages || totalPages;
             console.log("Fetched page", currentPage, "of", totalPages);
             currentPage++;
         } else {
