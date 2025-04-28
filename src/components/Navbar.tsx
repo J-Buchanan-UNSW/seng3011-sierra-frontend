@@ -35,6 +35,9 @@ export const Navbar: React.FC = () => {
                 <Link to="/companies" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md">
                   Companies
                 </Link>
+                <Link to="/upload" className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md">
+                  Upload
+                </Link>
               </div>
             </div>
           </div>
@@ -43,8 +46,8 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={() => handleDimensionChange('environmental')}
                 className={`px-3 py-1 text-sm font-medium ${
-                  selectedDimension === 'environmental' 
-                    ? 'bg-env-100 text-env-800' 
+                  selectedDimension === 'environmental'
+                    ? 'bg-env-100 text-env-800'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -53,8 +56,8 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={() => handleDimensionChange('social')}
                 className={`px-3 py-1 text-sm font-medium ${
-                  selectedDimension === 'social' 
-                    ? 'bg-soc-100 text-soc-800' 
+                  selectedDimension === 'social'
+                    ? 'bg-soc-100 text-soc-800'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -63,8 +66,8 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={() => handleDimensionChange('governance')}
                 className={`px-3 py-1 text-sm font-medium ${
-                  selectedDimension === 'governance' 
-                    ? 'bg-gov-100 text-gov-800' 
+                  selectedDimension === 'governance'
+                    ? 'bg-gov-100 text-gov-800'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -116,6 +119,13 @@ export const Navbar: React.FC = () => {
               onClick={() => setMenuOpen(false)}
             >
               Companies
+            </Link>
+            <Link
+              to="/upload"
+              className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              Upload
             </Link>
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">

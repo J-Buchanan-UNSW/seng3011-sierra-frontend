@@ -198,7 +198,7 @@ export const calculateScores = (companyData: any, maxValues: any) => {
 const fetchAllPaginated = async (baseUrl: string, pageSize = 5000) => {
     let allData: any[] = [];
     let currentPage = 1;
-    let totalPages = 1;
+    let totalPages = 3;
 
     while (currentPage <= totalPages) {
         const pagedUrl = `${baseUrl}&page=${currentPage}&page_size=${pageSize}`;
